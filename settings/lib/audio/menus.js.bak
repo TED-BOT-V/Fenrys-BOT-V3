@@ -1,0 +1,88 @@
+const fs = require('fs');
+const { pegarAudioAleatorioBuffer } = require('./audiosAleatorios2');
+
+// Função para deletar arquivo (não usada no momento, mas útil)
+function DLT_FL(filePath) {
+  if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+}
+
+async function menuHandler(tedzinho, from, pushname, date, hora, info, reply, prefix, NomeDoBot) {
+  try {
+    const imagemMenu = "https://c.top4top.io/p_34483vrql4.jpg";
+
+    // Áudio do menu
+    const audioBuffer = await pegarAudioAleatorioBuffer();
+    if (audioBuffer) {
+      await tedzinho.sendMessage(from, {
+        audio: audioBuffer,
+        ptt: true,
+        mimetype: "audio/mpeg"
+      }, { quoted: info });
+    } else {
+      console.warn("⚠️ Falha ao carregar áudio do menu.");
+      reply("⚠️ O áudio do menu não está disponível no momento.");
+    }
+
+    // Envia imagem com botões interativos
+    await tedzinho.sendMessage(from, {
+      image: { url: imagemMenu },
+      caption: `〔💼〕⥲ 𝙉𝙄𝘾𝙆: ${pushname}\n〔📅〕⥲ 𝘿𝘼𝙏𝘼: ${date}\n〔⏰〕⥲ 𝙃𝙊𝙍𝘼: ${hora}\n`,
+      footer: `🌟 ${NomeDoBot} - Seu assistente dedicado 🌟`,
+      buttons: [
+        {
+          buttonId: 'action',
+          buttonText: { displayText: 'menu' },
+          type: 4,
+          nativeFlowInfo: {
+            name: 'single_select',
+            paramsJson: JSON.stringify({
+              title: "Lista completa",
+              sections: [
+                {
+                  title: "🤖 Comandos do Fenrys",
+                  highlight_label: "By Fenrys BOT",
+                  rows: [
+  { title: "📌 MENU PRINCIPAL", description: "Acesse as informações básicas e os comandos mais usados.", id: `${prefix}menupp` },
+  { title: "🆕 MENU DE NOVOS CMD", description: "Menu onde vão está sempre os comandos novos!!!", id: `${prefix}menunovo` },
+  { title: "👑 MENU DONO", description: "Comandos exclusivos reservados ao proprietário do bot.", id: `${prefix}menudono` },
+  { title: "🛡 MENU ADMIN", description: "Gerencie e proteja seu grupo com essas funções administrativas.", id: `${prefix}menuadm` },
+  { title: "💎 MENU PREMIUM", description: "Acesso VIP a recursos especiais para membros premium.", id: `${prefix}menupremium` },
+  { title: "🎭 MENU BRINCADEIRAS", description: "Comandos divertidos e interativos para animar o chat!", id: `${prefix}brincadeiras` },
+  { title: "📥 EFEITOS EXTERNOS", description: "Aplique efeitos e brilhe rapidamente usando links externos.", id: `${prefix}Efeitosimg` },
+  { title: "💰 MENU COINS", description: "Gerencie sua economia no bot, ganhe e gaste moedas!", id: `${prefix}menucoins` },
+  { title: "⚔ MENU RPG", description: "Explore o universo RPG, lute, evolua e vença desafios!", id: `${prefix}menurpg` } // ← Adicionado aqui
+]
+                },
+                {
+                  title: "💸 Apoie o Projeto",
+                  highlight_label: "Doações",
+                  rows: [
+                    { title: "✨ DOAR VIA PIX", description: "Ajude o projeto a crescer com qualquer valor!", id: `${prefix}doar` }
+                  ]
+                },
+                {
+                  title: "🤝 Grupo & parcerias",
+                  highlight_label: "Grupo Oficial do BOT",
+                  rows: [
+                    { title: "📱 GRUPO OFICIAL", description: "Entre no nosso grupo e fique por dentro das novidades.", id: `${prefix}grupobot` },
+                    { title: "🤝 PARCERIAS", description: "Tem um projeto e quer fazer parceria? Clique aqui!", id: `${prefix}parcerias` }
+                  ]
+                }
+              ]
+            })
+          }
+        }
+      ],
+      headerType: 1,
+      viewOnce: true
+    }, { quoted: info });
+
+  } catch (error) {
+    console.error("Erro no menu:", error);
+    reply("❌ Ocorreu um erro ao exibir o menu. Tente novamente mais tarde.");
+  }
+}
+
+module.exports = {
+  menuHandler
+};
